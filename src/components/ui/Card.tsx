@@ -5,6 +5,7 @@ import {
   Pressable,
   ViewStyle,
   useColorScheme,
+  StyleProp,
 } from 'react-native';
 import { Colors, Spacing } from '@/constants/theme';
 
@@ -14,7 +15,7 @@ interface CardProps {
   children: React.ReactNode;
   onPress?: () => void;
   variant?: CardVariant;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
 }
 
 export function Card({

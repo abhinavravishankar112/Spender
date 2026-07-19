@@ -9,6 +9,7 @@ import {
   KeyboardTypeOptions,
   useColorScheme,
   Pressable,
+  StyleProp,
 } from 'react-native';
 import { Colors, Spacing } from '@/constants/theme';
 import { ThemedText } from '../themed-text';
@@ -22,8 +23,8 @@ interface InputProps {
   error?: string;
   keyboardType?: KeyboardTypeOptions;
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
-  style?: ViewStyle;
-  inputStyle?: TextStyle;
+  style?: StyleProp<ViewStyle>;
+  inputStyle?: StyleProp<TextStyle>;
   hint?: string;
 }
 

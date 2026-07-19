@@ -7,6 +7,7 @@ import {
   ViewStyle,
   TextStyle,
   useColorScheme,
+  StyleProp,
 } from 'react-native';
 import { Colors, Spacing } from '@/constants/theme';
 
@@ -20,8 +21,8 @@ interface ButtonProps {
   size?: ButtonSize;
   loading?: boolean;
   disabled?: boolean;
-  style?: ViewStyle;
-  textStyle?: TextStyle;
+  style?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
 }
 
 export function Button({
