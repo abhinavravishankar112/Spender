@@ -17,17 +17,21 @@ import { Colors, Spacing } from '@/constants/theme';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 
+import { useAuthStore } from '@/store/authStore';
+
 export default function LoginScreen() {
   const router = useRouter();
   const scheme = useColorScheme();
   const themeColors = Colors[scheme === 'unspecified' || !scheme ? 'light' : scheme];
+  
+  const { signIn } = useAuthStore();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!email || !password) {
       setError('Please fill in all fields');
       return;
@@ -35,17 +39,22 @@ export default function LoginScreen() {
     setError('');
     setLoading(true);
 
-    // Mock Login for Day 2 (Firebase Auth will be added in Day 3)
-    setTimeout(() => {
+    try {
+      await signIn(email, password);
+    } catch (err: any) {
+      setError(err.message || 'Invalid email or password');
       setLoading(false);
-      // Navigate to the dashboard
-      router.replace('/(app)');
-    }, 1200);
+    }
   };
 
-  const handleDemoMode = () => {
-    // Enter demo mode directly
-    router.replace('/(app)');
+  const handleDemoMode = async () => {
+    setLoading(true);
+    try {
+      await signIn('demo@spendr.com', 'demopassword');
+    } catch (err: any) {
+      setError('Failed to enter Demo Mode');
+      setLoading(false);
+    }
   };
 
   return (

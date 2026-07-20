@@ -17,10 +17,14 @@ import { Colors, Spacing } from '@/constants/theme';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 
+import { useAuthStore } from '@/store/authStore';
+
 export default function RegisterScreen() {
   const router = useRouter();
   const scheme = useColorScheme();
   const themeColors = Colors[scheme === 'unspecified' || !scheme ? 'light' : scheme];
+  
+  const { signUp } = useAuthStore();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -29,7 +33,7 @@ export default function RegisterScreen() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (!name || !email || !password || !confirmPassword) {
       setError('Please fill in all fields');
       return;
@@ -41,12 +45,12 @@ export default function RegisterScreen() {
     setError('');
     setLoading(true);
 
-    // Mock registration for Day 2 (Firebase Auth will be added in Day 3)
-    setTimeout(() => {
+    try {
+      await signUp(email, password, name);
+    } catch (err: any) {
+      setError(err.message || 'Failed to create account');
       setLoading(false);
-      // Navigate to the dashboard
-      router.replace('/(app)');
-    }, 1200);
+    }
   };
 
   return (
