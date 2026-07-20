@@ -25,6 +25,69 @@ interface ButtonProps {
   textStyle?: StyleProp<TextStyle>;
 }
 
+export const getButtonVariantStyles = (variant: ButtonVariant, themeColors: any): ViewStyle => {
+  switch (variant) {
+    case 'secondary':
+      return { backgroundColor: themeColors.secondary };
+    case 'success':
+      return { backgroundColor: themeColors.success };
+    case 'danger':
+      return { backgroundColor: themeColors.danger };
+    case 'outline':
+      return {
+        backgroundColor: 'transparent',
+        borderWidth: 1.5,
+        borderColor: themeColors.primary,
+      };
+    case 'primary':
+    default:
+      return { backgroundColor: themeColors.primary };
+  }
+};
+
+export const getButtonTextStyles = (variant: ButtonVariant, themeColors: any): TextStyle => {
+  if (variant === 'outline') {
+    return { color: themeColors.primary };
+  }
+  return { color: '#FFFFFF' };
+};
+
+export const getButtonSizeStyles = (size: ButtonSize): ViewStyle => {
+  switch (size) {
+    case 'sm':
+      return {
+        paddingVertical: Spacing.one * 1.5,
+        paddingHorizontal: Spacing.three,
+        borderRadius: 8,
+      };
+    case 'lg':
+      return {
+        paddingVertical: Spacing.three,
+        paddingHorizontal: Spacing.five,
+        borderRadius: 14,
+      };
+    case 'md':
+    default:
+      return {
+        paddingVertical: Spacing.two * 1.5,
+        paddingHorizontal: Spacing.four,
+        borderRadius: 12,
+      };
+  }
+};
+
+export const getButtonFontSize = (size: ButtonSize): number => {
+  switch (size) {
+    case 'sm':
+      return 13;
+    case 'lg':
+      return 16;
+    case 'md':
+    default:
+      return 15;
+  }
+};
+
 export function Button({
   title,
   onPress,
@@ -38,77 +101,14 @@ export function Button({
   const scheme = useColorScheme();
   const themeColors = Colors[scheme === 'unspecified' || !scheme ? 'light' : scheme];
 
-  const getVariantStyles = (): ViewStyle => {
-    switch (variant) {
-      case 'secondary':
-        return { backgroundColor: themeColors.secondary };
-      case 'success':
-        return { backgroundColor: themeColors.success };
-      case 'danger':
-        return { backgroundColor: themeColors.danger };
-      case 'outline':
-        return {
-          backgroundColor: 'transparent',
-          borderWidth: 1.5,
-          borderColor: themeColors.primary,
-        };
-      case 'primary':
-      default:
-        return { backgroundColor: themeColors.primary };
-    }
-  };
-
-  const getTextStyles = (): TextStyle => {
-    if (variant === 'outline') {
-      return { color: themeColors.primary };
-    }
-    return { color: '#FFFFFF' };
-  };
-
-  const getSizeStyles = (): ViewStyle => {
-    switch (size) {
-      case 'sm':
-        return {
-          paddingVertical: Spacing.one * 1.5,
-          paddingHorizontal: Spacing.three,
-          borderRadius: 8,
-        };
-      case 'lg':
-        return {
-          paddingVertical: Spacing.three,
-          paddingHorizontal: Spacing.five,
-          borderRadius: 14,
-        };
-      case 'md':
-      default:
-        return {
-          paddingVertical: Spacing.two * 1.5,
-          paddingHorizontal: Spacing.four,
-          borderRadius: 12,
-        };
-    }
-  };
-
-  const getFontSize = (): number => {
-    switch (size) {
-      case 'sm':
-        return 13;
-      case 'lg':
-        return 16;
-      case 'md':
-      default:
-        return 15;
-    }
-  };
-
   return (
     <Pressable
       onPress={onPress}
       disabled={disabled || loading}
       style={({ pressed }) => [
         styles.baseButton,
-        getVariantStyles(),
-        getSizeStyles(),
+        getButtonVariantStyles(variant, themeColors),
+        getButtonSizeStyles(size),
         pressed && styles.pressed,
         disabled && styles.disabled,
         style,
@@ -122,8 +122,8 @@ export function Button({
         <Text
           style={[
             styles.baseText,
-            { fontSize: getFontSize() },
-            getTextStyles(),
+            { fontSize: getButtonFontSize(size) },
+            getButtonTextStyles(variant, themeColors),
             textStyle,
           ]}>
           {title}
