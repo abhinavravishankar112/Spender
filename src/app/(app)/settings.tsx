@@ -14,6 +14,8 @@ import { Colors, Spacing } from '@/constants/theme';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 
+import { useAuthStore } from '@/store/authStore';
+
 const CURRENCIES = [
   { code: 'USD', name: 'US Dollar ($)' },
   { code: 'INR', name: 'Indian Rupee (₹)' },
@@ -26,15 +28,28 @@ export default function SettingsScreen() {
   const themeColors = Colors[scheme === 'unspecified' || !scheme ? 'light' : scheme];
 
   const { currency, setCurrency, loadDemoData } = useFinanceStore();
+  const { user, logout } = useAuthStore();
 
-  const handleSignOut = () => {
-    // Navigate back to login
-    router.replace('/(auth)/login');
+  const handleSignOut = async () => {
+    try {
+      await logout();
+    } catch (err) {
+      console.error('Failed to sign out:', err);
+    }
   };
 
   const handleClearData = () => {
     loadDemoData();
   };
+
+  const initials = user?.displayName
+    ? user.displayName
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .slice(0, 2)
+        .toUpperCase()
+    : 'U';
 
   return (
     <ThemedView style={styles.container}>
@@ -43,11 +58,15 @@ export default function SettingsScreen() {
         {/* Profile Card */}
         <Card variant="flat" style={styles.profileCard}>
           <View style={[styles.avatar, { backgroundColor: themeColors.primary }]}>
-            <Text style={styles.avatarText}>JD</Text>
+            <Text style={styles.avatarText}>{initials}</Text>
           </View>
           <View style={styles.profileDetails}>
-            <Text style={[styles.profileName, { color: themeColors.text }]}>John Doe</Text>
-            <Text style={[styles.profileEmail, { color: themeColors.textSecondary }]}>john.doe@example.com</Text>
+            <Text style={[styles.profileName, { color: themeColors.text }]}>
+              {user?.displayName || 'Spendr User'}
+            </Text>
+            <Text style={[styles.profileEmail, { color: themeColors.textSecondary }]}>
+              {user?.email || 'No email associated'}
+            </Text>
           </View>
         </Card>
 
