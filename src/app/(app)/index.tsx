@@ -24,8 +24,15 @@ export default function DashboardScreen() {
   const scheme = useColorScheme();
   const themeColors = Colors[scheme === 'unspecified' || !scheme ? 'light' : scheme];
 
-  const { transactions, currency, addTransaction } = useFinanceStore();
+  const { transactions, currency, addTransaction, rates, fetchRates } = useFinanceStore();
   const [modalVisible, setModalVisible] = useState(false);
+
+  // Fetch live exchange rates on mount
+  React.useEffect(() => {
+    fetchRates();
+  }, []);
+
+  const rate = rates[currency] || 1.0;
 
   // Form State
   const [title, setTitle] = useState('');
@@ -34,14 +41,14 @@ export default function DashboardScreen() {
   const [category, setCategory] = useState('Food');
   const [formError, setFormError] = useState('');
 
-  // Math
+  // Math (converted to active display currency)
   const totalIncome = transactions
     .filter((t) => t.type === 'income')
-    .reduce((sum, t) => sum + t.amount, 0);
+    .reduce((sum, t) => sum + t.amount, 0) * rate;
 
   const totalExpense = transactions
     .filter((t) => t.type === 'expense')
-    .reduce((sum, t) => sum + t.amount, 0);
+    .reduce((sum, t) => sum + t.amount, 0) * rate;
 
   const balance = totalIncome - totalExpense;
 
@@ -144,7 +151,7 @@ export default function DashboardScreen() {
                   styles.transactionAmount,
                   { color: t.type === 'income' ? themeColors.success : themeColors.danger },
                 ]}>
-                {t.type === 'income' ? '+' : '-'}{formatMoney(t.amount)}
+                {t.type === 'income' ? '+' : '-'}{formatMoney(t.amount * rate)}
               </Text>
             </Card>
           ))

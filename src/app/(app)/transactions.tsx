@@ -19,9 +19,11 @@ export default function TransactionsScreen() {
   const scheme = useColorScheme();
   const themeColors = Colors[scheme === 'unspecified' || !scheme ? 'light' : scheme];
 
-  const { transactions, currency, deleteTransaction } = useFinanceStore();
+  const { transactions, currency, deleteTransaction, rates } = useFinanceStore();
   const [search, setSearch] = useState('');
   const [activeFilter, setActiveFilter] = useState<'All' | 'Income' | 'Expense'>('All');
+
+  const rate = rates[currency] || 1.0;
 
   const formatMoney = (val: number) => {
     const symbol = currency === 'INR' ? '₹' : currency === 'EUR' ? '€' : '$';
@@ -54,7 +56,7 @@ export default function TransactionsScreen() {
             styles.transactionAmount,
             { color: item.type === 'income' ? themeColors.success : themeColors.danger },
           ]}>
-          {item.type === 'income' ? '+' : '-'}{formatMoney(item.amount)}
+          {item.type === 'income' ? '+' : '-'}{formatMoney(item.amount * rate)}
         </Text>
         <Pressable
           onPress={() => deleteTransaction(item.id)}

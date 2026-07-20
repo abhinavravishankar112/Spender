@@ -21,7 +21,8 @@ export default function AnalyticsScreen() {
   const scheme = useColorScheme();
   const themeColors = Colors[scheme === 'unspecified' || !scheme ? 'light' : scheme];
 
-  const { transactions, budgets, currency, setBudget } = useFinanceStore();
+  const { transactions, budgets, currency, setBudget, rates } = useFinanceStore();
+  const rate = rates[currency] || 1.0;
 
   // Budget Adjust Form State
   const [selectedCategory, setSelectedCategory] = useState('Food');
@@ -68,7 +69,7 @@ export default function AnalyticsScreen() {
         <Card variant="default">
           {BUDGET_CATEGORIES.map((cat) => {
             const limit = budgets[cat] || 100;
-            const spent = calculateSpent(cat);
+            const spent = calculateSpent(cat) * rate;
             const ratio = limit > 0 ? spent / limit : 0;
             const percent = Math.min(Math.round(ratio * 100), 100);
 
